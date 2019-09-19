@@ -1,0 +1,10 @@
+8547698456 [updated]
+
+jkfdhvjkdhbfjg
+In version 2.3 of Python, this module was overhauled for enhanced security. It now provides three new functions, NamedTemporaryFile(), m
+kstemp(), and mkdtemp(), which should eliminate all remaining need to use the insecure mktemp() function. Temporary file names cre
+
+Return a file-like object that can be used as a temporary storage area. The file is created using mkstemp(). It will be destroyed as
+soon as it is closed (including an implicit close when the object is garbage collected). Under Unix, the directory entry for the file is removed immed
+iately after the file is created. Other platforms do not support this; your code should not rely on a temporary file created using this func
+tion having or not having a visible name in the file system.ated by this module no longer contain the process ID; instead a string of six random characters is used.

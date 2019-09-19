@@ -3,10 +3,12 @@ import os
 
 class FileController(object):
     def __init__(self):
-        self.current_working_path = os.getcwd()
+        self.current_working_path = os.getcwd() + "/serverStorage"
 
     def create_file(self, name, body):
-        path = "serverStorage/" + name
+        # return 'in here'
+        path = self.current_working_path + "/" + name
+        # return path
         f = open(path, 'wb+')
         f.write(body)
         f.close()

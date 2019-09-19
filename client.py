@@ -1,7 +1,7 @@
 import Pyro4
-from Pyro4.util import SerializerBase
 import os
-
+import tempfile
+import subprocess
 
 def connect_server():
     uri = "PYRONAME:fileControllerServer@localhost:1337"
@@ -21,10 +21,18 @@ class Client:
     def upload_file(self, name):
         full_path = self.current_working_path + '/' + name
         if not os.path.isfile(full_path):
-            return 'File not found'
+            return 'File not found. full path is', full_path
         with open(full_path, 'rb') as f:
             file_binary = f.read()
         return self.fc_server.create_file(name, file_binary)
+
+    def update_file(self, path, original_file_name):
+        if not os.path.isfile(path):
+            return 'File not found'
+        with open(path, 'rb') as f:
+            file_binary = f.read()
+        print 'original file name', original_file_name
+        return self.fc_server.create_file(original_file_name, file_binary)
 
     def listen_command(self):
         while True:
@@ -51,6 +59,19 @@ class Client:
                 f = open(self.current_working_path + '/' + file_name, 'wb+')
                 f.write(server_response)
                 f.close()
+            elif split_command[0] == 'update':
+                print 'in update'
+                file_name = split_command[1]
+                server_response = self.fc_server.read_file(file_name)
+
+                f = tempfile.NamedTemporaryFile(delete=False)
+                f.write(server_response)
+                f.close()
+
+                path = f.name
+                subprocess.call(['nano', path])
+                print self.update_file(path, file_name)
+
 
     def delete_file(self, file_name):
         return self.fc_server.delete_file(file_name)

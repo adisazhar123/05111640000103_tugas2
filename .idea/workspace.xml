@@ -2,13 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0b341638-5076-4b36-8731-6c6ef709b12e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/tugas2Sister.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/tugas2Sister.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientStorage/client.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fileController.py" beforeDir="false" afterPath="$PROJECT_DIR$/fileController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -114,7 +108,8 @@
       <option name="presentableId" value="Default" />
       <updated>1568770795558</updated>
       <workItem from="1568770799806" duration="2431000" />
-      <workItem from="1568799966503" duration="10369000" />
+      <workItem from="1568799966503" duration="10688000" />
+      <workItem from="1568907637548" duration="55000" />
     </task>
     <servers />
   </component>
@@ -126,7 +121,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
