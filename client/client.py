@@ -13,10 +13,10 @@ class Client:
         self.fc_server = connect_server()
         self.current_working_path = os.getcwd() + '/' + 'clientStorage'
         print 'Connected to remote server!'
-        self.show_help()
+        self.show_help_server()
 
-    def show_help(self):
-        print "1. list files - ls\n2. upload file - upload [filename]\n"
+    def show_help_server(self):
+        print "[COMMANDS]\n1. list files - lsserver\n2. upload file - upload [filename]\n3. change directory - cdserver [path]\n4. delete file - rm [filename]\n5. update file (text) - update [filename].\n6. download file - read [filename]\n7. change client directory - cdclient [path]\n8. list client files - lsclient"
 
     def upload_file(self, name):
         full_path = self.current_working_path + '/' + name
@@ -41,18 +41,21 @@ class Client:
         os.chdir(wanted_path)
         self.current_working_path = os.getcwd()
         return 'Moved path succesfully. Now in path ' + self.current_working_path
+
     def list_files_client(self):
         return os.listdir(self.current_working_path)
+
+    def delete_file(self, file_name):
+        return self.fc_server.delete_file(file_name)
 
     def listen_command(self):
         while True:
             command = raw_input()
-            print 'command is ' + command
             split_command = command.split(' ')
             if split_command[0] == 'lsserver':
                 for f in self.fc_server.list_files():
                     print f
-            if split_command[0] == 'lsclient':
+            elif split_command[0] == 'lsclient':
                 for f in self.list_files_client():
                     print f
             elif split_command[0] == 'cdserver':
@@ -68,7 +71,6 @@ class Client:
                 file_name = split_command[1]
                 print self.delete_file(file_name)
             elif split_command[0] == 'read':
-                print 'in read'
                 file_name = split_command[1]
                 server_response = self.fc_server.read_file(file_name)
 
@@ -83,14 +85,11 @@ class Client:
                 f = tempfile.NamedTemporaryFile(delete=False)
                 f.write(server_response)
                 f.close()
-
                 path = f.name
                 subprocess.call(['nano', path])
                 print self.update_file(path, file_name)
-
-
-    def delete_file(self, file_name):
-        return self.fc_server.delete_file(file_name)
+            else:
+                print 'Command not recognised.'
 
 
 if __name__ == '__main__':

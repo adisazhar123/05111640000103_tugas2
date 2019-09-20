@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0b341638-5076-4b36-8731-6c6ef709b12e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientStorage/ok.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fileController.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/fileController.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/serverStorage/new.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client/client.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -142,6 +137,8 @@
       <workItem from="1568799966503" duration="10688000" />
       <workItem from="1568907637548" duration="55000" />
       <workItem from="1568995583402" duration="924000" />
+      <workItem from="1568996962265" duration="315000" />
+      <workItem from="1568997776649" duration="969000" />
     </task>
     <servers />
   </component>
