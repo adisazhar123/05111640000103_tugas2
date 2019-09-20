@@ -1,5 +1,5 @@
 /venv/*
 /__pycache__/*
 /.idea/*
-/serverStorage/*
-/clientStorage/*
+/server/serverStorage/*
+/client/clientStorage/*

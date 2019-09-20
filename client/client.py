@@ -34,17 +34,33 @@ class Client:
         print 'original file name', original_file_name
         return self.fc_server.create_file(original_file_name, file_binary)
 
+    def change_dir_client(self, path):
+        wanted_path = self.current_working_path + '/' + path
+        if not os.path.exists(wanted_path):
+            return 'Path not found'
+        os.chdir(wanted_path)
+        self.current_working_path = os.getcwd()
+        return 'Moved path succesfully. Now in path ' + self.current_working_path
+    def list_files_client(self):
+        return os.listdir(self.current_working_path)
+
     def listen_command(self):
         while True:
             command = raw_input()
             print 'command is ' + command
             split_command = command.split(' ')
-            if split_command[0] == 'ls':
+            if split_command[0] == 'lsserver':
                 for f in self.fc_server.list_files():
                     print f
-            elif split_command[0] == 'cd':
+            if split_command[0] == 'lsclient':
+                for f in self.list_files_client():
+                    print f
+            elif split_command[0] == 'cdserver':
                 dir_name = split_command[1]
                 print self.fc_server.change_dir(dir_name)
+            elif split_command[0] =='cdclient':
+                dir_name = split_command[1]
+                print self.change_dir_client(dir_name)
             elif split_command[0] == 'upload':
                 file_name = split_command[1]
                 print self.upload_file(file_name)
