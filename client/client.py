@@ -65,13 +65,13 @@ class Client:
                 dir_name = split_command[1]
                 print self.change_dir_client(dir_name)
             elif split_command[0] == 'upload':
-                file_name = split_command[1]
+                file_name = " ".join(split_command[1:])
                 print self.upload_file(file_name)
             elif split_command[0] == 'rm':
-                file_name = split_command[1]
+                file_name = " ".join(split_command[1:])
                 print self.delete_file(file_name)
             elif split_command[0] == 'read':
-                file_name = split_command[1]
+                file_name = " ".join(split_command[1:])
                 server_response = self.fc_server.read_file(file_name)
 
                 f = open(self.current_working_path + '/' + file_name, 'wb+')
