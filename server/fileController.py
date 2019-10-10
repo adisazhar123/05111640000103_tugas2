@@ -44,6 +44,9 @@ class FileController(object):
         f.close()
         return binary_file
 
+    def ping(self):
+        return "ok from server"
+
 
 if __name__ == '__main__':
     fc = FileController()
