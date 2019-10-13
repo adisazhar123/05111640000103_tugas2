@@ -1,14 +1,16 @@
 import time
-
 import Pyro4
-import os
 import tempfile
 import subprocess
 import threading
+import sys
+import os
+
+sys.path.append(os.path.abspath("/home/adis/projects/python/05111640000103_tugas2"))
 
 from Pyro4.errors import ConnectionClosedError, CommunicationError
-
 from heartbeatService import HeartBeatService
+from service.brokerClient import AllToAllHeartbeat
 
 
 def connect_server():
@@ -33,9 +35,20 @@ def start_heartbeat_service(hb_service):
 def detect_heatbeat_failure(hb_service):
     while True:
         if time.time() - hb_service.heartbeat_received_at > 3:
-            print 'heartbeat failure detected'
+            print '[HEARTBEAT] failure detected'
             break
     return
+
+
+def start_all_to_all_heartbeat_server_by_client(all_to_all_heartbeat_obj):
+    daemon = Pyro4.Daemon(host="localhost")
+    ns = Pyro4.locateNS("localhost", 1337)
+    uri_all_to_all_heartbeat = daemon.register(all_to_all_heartbeat_obj)
+    print 'URI all to all heart beat server exposed by client: ', uri_all_to_all_heartbeat
+    print 'all to all heartbeat server .... client id', all_to_all_heartbeat_obj.client_id
+    ns.register("allToAllHeartbeatByClient_" + all_to_all_heartbeat_obj.client_id, uri_all_to_all_heartbeat)
+    all_to_all_heartbeat_obj.server_status = 1
+    daemon.requestLoop()
 
 
 class Client:
@@ -100,14 +113,14 @@ class Client:
                 ack = self.fc_server.ping()
                 end = time.time()
                 # print 'took ', end-start, ' seconds'
-                if end-start > 3:
+                if end - start > 3:
                     break
                 time.sleep(3)
             except ConnectionClosedError as e:
                 break
             except CommunicationError as e:
                 break
-        print 'Server is not responding. Failure detected!'
+        print '[PING ACK] File controller Server is not responding. Failure detected!'
         return
 
     def listen_command(self):
@@ -123,7 +136,7 @@ class Client:
             elif split_command[0] == 'cdserver':
                 dir_name = split_command[1]
                 print self.fc_server.change_dir(dir_name)
-            elif split_command[0] =='cdclient':
+            elif split_command[0] == 'cdclient':
                 dir_name = split_command[1]
                 print self.change_dir_client(dir_name)
             elif split_command[0] == 'upload':
@@ -155,18 +168,34 @@ class Client:
 
 
 if __name__ == '__main__':
+    # PING ACK
     client = Client()
-    pingThread = threading.Thread(target=client.ping)
-    pingThread.daemon = True
-    pingThread.start()
+    ping_thread = threading.Thread(target=client.ping)
+    ping_thread.daemon = True
+    ping_thread.start()
 
-    hbService = HeartBeatService()
-    heartbeatServer = threading.Thread(target=start_heartbeat_service, args=(hbService,))
-    heartbeatServer.daemon = True
-    heartbeatServer.start()
+    # Heartbeat protocol ... 1 -> receive the heartbeat from file sharing server
+    # hb_service = HeartBeatService()
+    # heartbeat_server = threading.Thread(target=start_heartbeat_service, args=(hb_service,))
+    # heartbeat_server.daemon = True
+    # heartbeat_server.start()
 
-    hbFailureDetection = threading.Thread(target=detect_heatbeat_failure, args=(hbService,))
-    hbFailureDetection.daemon = True
-    hbFailureDetection.start()
+    # Heartbeat protocol ... 2 -> detect the failed file sharing server
+    # hb_failure_detection = threading.Thread(target=detect_heatbeat_failure, args=(hb_service,))
+    # hb_failure_detection.daemon = True
+    # hb_failure_detection.start()
+
+    # start all to all heartbeat server by client
+    all_to_all_heartbeat_server_obj = AllToAllHeartbeat()
+    all_to_all_heartbeat_server = threading.Thread(target=start_all_to_all_heartbeat_server_by_client,
+                                                   args=(all_to_all_heartbeat_server_obj,))
+    all_to_all_heartbeat_server.daemon = True
+    all_to_all_heartbeat_server.start()
+    #
+    # # do all to all heartbeat ping
+    all_to_all_heartbeat_ping_thread = threading.Thread(
+        target=all_to_all_heartbeat_server_obj.all_to_all_heartbeat_ping)
+    all_to_all_heartbeat_ping_thread.daemon = True
+    all_to_all_heartbeat_ping_thread.start()
 
     client.listen_command()

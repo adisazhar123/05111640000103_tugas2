@@ -1,11 +1,14 @@
 import time
-
 import Pyro4
 import threading
+import sys
+import os
+
+sys.path.append(os.path.abspath("/home/adis/projects/python/05111640000103_tugas2"))
 
 from Pyro4.errors import CommunicationError
-
 from fileController import FileController
+from service.brokerClient import AllToAllHeartbeat
 
 
 def start_server():
@@ -15,6 +18,17 @@ def start_server():
     uri_file_controller = daemon.register(x_file_controller)
     print('URI file controller server: ', uri_file_controller)
     ns.register("fileControllerServer", uri_file_controller)
+    daemon.requestLoop()
+
+
+def start_all_to_all_heartbeat_server(all_to_all_heartbeat_obj):
+    daemon = Pyro4.Daemon(host="localhost")
+    ns = Pyro4.locateNS("localhost", 1337)
+    uri_all_to_all_heartbeat = daemon.register(all_to_all_heartbeat_obj)
+    print 'URI all to all heart beat server exposed by client: ', uri_all_to_all_heartbeat
+    print 'all to all heartbeat server .... client id', all_to_all_heartbeat_obj.client_id
+    ns.register("allToAllHeartbeatByClient_" + all_to_all_heartbeat_obj.client_id, uri_all_to_all_heartbeat)
+    all_to_all_heartbeat_obj.server_status = 1
     daemon.requestLoop()
 
 
@@ -37,8 +51,21 @@ def heartbeat():
         except CommunicationError as e:
             print 'lalala', e.message
 
+
 if __name__ == "__main__":
-    heartbeatThread = threading.Thread(target=heartbeat)
-    heartbeatThread.daemon = True
-    heartbeatThread.start()
+    # heartbeatThread = threading.Thread(target=heartbeat)
+    # heartbeatThread.daemon = True
+    # heartbeatThread.start()
+
+    all_to_all_heartbeat_server_obj = AllToAllHeartbeat()
+    all_to_all_heartbeat_server = threading.Thread(target=start_all_to_all_heartbeat_server,
+                                                   args=(all_to_all_heartbeat_server_obj,))
+    all_to_all_heartbeat_server.daemon = True
+    all_to_all_heartbeat_server.start()
+
+    all_to_all_heartbeat_ping_thread = threading.Thread(
+        target=all_to_all_heartbeat_server_obj.all_to_all_heartbeat_ping)
+    all_to_all_heartbeat_ping_thread.daemon = True
+    all_to_all_heartbeat_ping_thread.start()
+
     start_server()
