@@ -31,16 +31,19 @@ def start_heartbeat_service(hb_service):
 
 
 def detect_heatbeat_failure(hb_service, client):
+    time_unit = 3
     try:
         while True:
-            if time.time() - hb_service.heartbeat_received_at > 2*3:
-                print '[HEARTBEAT] failure detected'
+            how_long_it_took = time.time() - hb_service.heartbeat_received_at
+            if how_long_it_took > time_unit:
+                print '[HEARTBEAT] failure detected', how_long_it_took
                 break
         client.failure_detected = 1
-        return
+        time.sleep((hb_service.heartbeat_received + 1) * time_unit)
     except Exception as e:
         print e.message
         exit()
+    return
 
 def start_all_to_all_heartbeat_server_by_client(all_to_all_heartbeat_obj):
     daemon = Pyro4.Daemon(host="localhost")
@@ -104,19 +107,27 @@ class Client:
             print 'failure detected', e.message
 
     def ping(self):
+        time_unit = 3
         while True:
             try:
                 start = time.time()
                 self.fc_server.ping()
                 end = time.time()
                 # print 'took ', end-start, ' seconds'
-                if end - start > 3:
+                if end - start > time_unit:
                     break
-                time.sleep(3)
+                time.sleep(time_unit)
             except ConnectionClosedError as e:
                 break
             except CommunicationError as e:
                 break
+        try:
+            time.sleep(time_unit)
+            self.fc_server.ping()
+        except ConnectionClosedError as e:
+            time.sleep(time_unit)
+        except CommunicationError as e:
+            time.sleep(time_unit)
         self.failure_detected = 1
         print '[PING ACK] File controller Server is not responding. Failure detected!'
         return
