@@ -18,7 +18,7 @@ class HeartBeatService(Singleton):
         self.heartbeat_received = 0
         self.heartbeat_received_at = time.time()
 
-    def receive_heartbeat(self):
+    def receive_heartbeat(self, count):
         self.heartbeat_received = self.heartbeat_received + 1
         self.heartbeat_received_at = time.time()
-        return 'Client received the heartbeat successfully.'
+        return 'Client received the heartbeat successfully.', count
