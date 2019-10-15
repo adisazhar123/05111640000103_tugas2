@@ -4,7 +4,7 @@ import threading
 import sys
 import os
 
-sys.path.append(os.path.abspath("/home/adis/projects/python/05111640000103_tugas2"))
+sys.path.append(os.path.abspath("/home/adisazhar/projects/python/05111640000103_tugas2"))
 
 from Pyro4.errors import CommunicationError
 from fileController import FileController
@@ -41,22 +41,24 @@ def connect_to_heartbeat_service():
 
 
 def heartbeat():
-    heartbeatServer = connect_to_heartbeat_service()
-    print 'connect to heartbeatServer'
+    print 'connecting to heartbeatServer'
     time.sleep(3)
+    heartbeat_server = connect_to_heartbeat_service()
     while True:
         try:
-            print heartbeatServer.receive_heartbeat()
-            time.sleep(2)
+            print heartbeat_server.receive_heartbeat()
+            time.sleep(3)
         except CommunicationError as e:
-            print 'lalala', e.message
+            print 'Failure detected. Client suspected of disconnecting.', e.message
 
 
 if __name__ == "__main__":
+    # Uncomment for heartbeat
     # heartbeatThread = threading.Thread(target=heartbeat)
     # heartbeatThread.daemon = True
     # heartbeatThread.start()
 
+    # Uncomment for all to all heartbeat
     all_to_all_heartbeat_server_obj = AllToAllHeartbeat()
     all_to_all_heartbeat_server = threading.Thread(target=start_all_to_all_heartbeat_server,
                                                    args=(all_to_all_heartbeat_server_obj,))

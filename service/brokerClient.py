@@ -29,3 +29,6 @@ class AllToAllHeartbeat:
                 print 'trying to ping broker'
                 print self.heartbeat_broker.broadcast()
                 time.sleep(3)
+
+    def receive_broken_client_news(self, news):
+        print news
