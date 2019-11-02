@@ -214,15 +214,15 @@ if __name__ == '__main__':
     # ping_thread.start()
 
     # Heartbeat protocol ... 1 -> receive the heartbeat from file sharing server
-    hb_service = HeartBeatService()
-    heartbeat_server = threading.Thread(target=start_heartbeat_service, args=(hb_service,))
-    heartbeat_server.daemon = True
-    heartbeat_server.start()
+    # hb_service = HeartBeatService()
+    # heartbeat_server = threading.Thread(target=start_heartbeat_service, args=(hb_service,))
+    # heartbeat_server.daemon = True
+    # heartbeat_server.start()
 
     # Heartbeat protocol ... 2 -> detect the failed file sharing server
-    hb_failure_detection = threading.Thread(target=detect_heatbeat_failure, args=(hb_service, client))
-    hb_failure_detection.daemon = True
-    hb_failure_detection.start()
+    # hb_failure_detection = threading.Thread(target=detect_heatbeat_failure, args=(hb_service, client))
+    # hb_failure_detection.daemon = True
+    # hb_failure_detection.start()
 
     # start all to all heartbeat server by client
     # all_to_all_heartbeat_server_obj = AllToAllHeartbeat()

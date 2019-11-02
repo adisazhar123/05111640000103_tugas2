@@ -44,9 +44,11 @@ def heartbeat():
     print 'connecting to heartbeatServer'
     time.sleep(3)
     heartbeat_server = connect_to_heartbeat_service()
+    heartbeat_count = 0
     while True:
         try:
-            print heartbeat_server.receive_heartbeat()
+            print heartbeat_server.receive_heartbeat(heartbeat_count)
+            heartbeat_count = heartbeat_count + 1
             time.sleep(3)
         except CommunicationError as e:
             print 'Failure detected. Client suspected of disconnecting.', e.message
@@ -59,15 +61,15 @@ if __name__ == "__main__":
     # heartbeatThread.start()
 
     # Uncomment for all to all heartbeat
-    all_to_all_heartbeat_server_obj = AllToAllHeartbeat()
-    all_to_all_heartbeat_server = threading.Thread(target=start_all_to_all_heartbeat_server,
-                                                   args=(all_to_all_heartbeat_server_obj,))
-    all_to_all_heartbeat_server.daemon = True
-    all_to_all_heartbeat_server.start()
-
-    all_to_all_heartbeat_ping_thread = threading.Thread(
-        target=all_to_all_heartbeat_server_obj.all_to_all_heartbeat_ping)
-    all_to_all_heartbeat_ping_thread.daemon = True
-    all_to_all_heartbeat_ping_thread.start()
+    # all_to_all_heartbeat_server_obj = AllToAllHeartbeat()
+    # all_to_all_heartbeat_server = threading.Thread(target=start_all_to_all_heartbeat_server,
+    #                                                args=(all_to_all_heartbeat_server_obj,))
+    # all_to_all_heartbeat_server.daemon = True
+    # all_to_all_heartbeat_server.start()
+    #
+    # all_to_all_heartbeat_ping_thread = threading.Thread(
+    #     target=all_to_all_heartbeat_server_obj.all_to_all_heartbeat_ping)
+    # all_to_all_heartbeat_ping_thread.daemon = True
+    # all_to_all_heartbeat_ping_thread.start()
 
     start_server()
