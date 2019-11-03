@@ -25,7 +25,7 @@ from service.brokerClient import AllToAllHeartbeat
 
 def connect_server():
     try:
-        uri = "PYRONAME:fileControllerServer@localhost:1337"
+        uri = "PYRONAME:fileControllerServer_2@localhost:1337"
         return Pyro4.Proxy(uri)
     except CommunicationError as e:
         print 'lalala'

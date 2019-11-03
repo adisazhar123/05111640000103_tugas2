@@ -8,10 +8,13 @@ def connect_to_replication_server():
     return Pyro4.Proxy(uri)
 
 
+@Pyro4.expose
 class FileController(object):
     def __init__(self):
+        self.instance_name = "fileControllerServer_1"
         self.current_working_path = os.getcwd() + "/serverStorage"
         self.replication_server = connect_to_replication_server()
+        self.replication_server.file_servers_on_connect(self.instance_name)
 
     def create_file(self, name, body):
         # return 'in here'
@@ -20,10 +23,12 @@ class FileController(object):
         f = open(path, 'wb+')
         f.write(body)
         f.close()
+        replication_response = self.replication_server.hello_world(self.instance_name, name, body)
+        print replication_response
         return "ok. file created"
 
     def list_files(self):
-        return [os.listdir(self.current_working_path), self.replication_server.hello_world()]
+        return os.listdir(self.current_working_path)
 
     def change_dir(self, path):
         wanted_path = self.current_working_path + '/' + path

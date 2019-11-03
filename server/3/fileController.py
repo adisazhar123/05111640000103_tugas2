@@ -23,7 +23,8 @@ class FileController(object):
         return "ok. file created"
 
     def list_files(self):
-        return [os.listdir(self.current_working_path), self.replication_server.hello_world()]
+        return os.listdir(self.current_working_path)
+        # return [os.listdir(self.current_working_path), self.replication_server.hello_world()]
 
     def change_dir(self, path):
         wanted_path = self.current_working_path + '/' + path
