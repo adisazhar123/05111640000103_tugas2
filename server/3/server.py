@@ -11,11 +11,10 @@ from fileController import FileController
 from service.brokerClient import AllToAllHeartbeat
 
 
-def start_server():
+def start_server(file_controller_obj):
     daemon = Pyro4.Daemon(host="localhost")
     ns = Pyro4.locateNS("localhost", 1337)
-    x_file_controller = Pyro4.expose(FileController)
-    uri_file_controller = daemon.register(x_file_controller)
+    uri_file_controller = daemon.register(file_controller_obj)
     print('URI file controller server: ', uri_file_controller)
     ns.register("fileControllerServer_3", uri_file_controller)
     daemon.requestLoop()
@@ -72,4 +71,5 @@ if __name__ == "__main__":
     # all_to_all_heartbeat_ping_thread.daemon = True
     # all_to_all_heartbeat_ping_thread.start()
 
-    start_server()
+    file_controller_obj = FileController()
+    start_server(file_controller_obj)

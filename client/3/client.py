@@ -22,10 +22,11 @@ from service.brokerClient import AllToAllHeartbeat
 
 # def start_exposing_replication():
 
+file_server_instance_name = 'fileControllerServer_3'
 
 def connect_server():
     try:
-        uri = "PYRONAME:fileControllerServer@localhost:1337"
+        uri = "PYRONAME:" + file_server_instance_name + "@localhost:1337"
         return Pyro4.Proxy(uri)
     except CommunicationError as e:
         print 'lalala'
@@ -173,7 +174,8 @@ class Client:
 
     def list_server(self):
         try:
-            for f in self.fc_server.list_files():
+            response = self.fc_server.list_files()
+            for f in response:
                 print f
         except CommunicationError as e:
             return 'failure detected', e.message
