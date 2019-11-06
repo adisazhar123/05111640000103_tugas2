@@ -54,22 +54,5 @@ def heartbeat():
 
 
 if __name__ == "__main__":
-    # Uncomment for heartbeat
-    # heartbeatThread = threading.Thread(target=heartbeat)
-    # heartbeatThread.daemon = True
-    # heartbeatThread.start()
-
-    # Uncomment for all to all heartbeat
-    # all_to_all_heartbeat_server_obj = AllToAllHeartbeat()
-    # all_to_all_heartbeat_server = threading.Thread(target=start_all_to_all_heartbeat_server,
-    #                                                args=(all_to_all_heartbeat_server_obj,))
-    # all_to_all_heartbeat_server.daemon = True
-    # all_to_all_heartbeat_server.start()
-    #
-    # all_to_all_heartbeat_ping_thread = threading.Thread(
-    #     target=all_to_all_heartbeat_server_obj.all_to_all_heartbeat_ping)
-    # all_to_all_heartbeat_ping_thread.daemon = True
-    # all_to_all_heartbeat_ping_thread.start()
-
     file_controller_obj = FileController()
     start_server(file_controller_obj)

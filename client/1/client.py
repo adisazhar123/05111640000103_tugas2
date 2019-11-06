@@ -22,9 +22,7 @@ from service.brokerClient import AllToAllHeartbeat
 
 # def start_exposing_replication():
 
-file_server_instance_name = 'fileControllerServer_1'
-
-def connect_server():
+def connect_server(file_server_instance_name):
     try:
         uri = "PYRONAME:" + file_server_instance_name + "@localhost:1337"
         return Pyro4.Proxy(uri)
@@ -56,6 +54,7 @@ def detect_heatbeat_failure(hb_service, client):
         exit()
     return
 
+
 def start_all_to_all_heartbeat_server_by_client(all_to_all_heartbeat_obj):
     daemon = Pyro4.Daemon(host="localhost")
     ns = Pyro4.locateNS("localhost", 1337)
@@ -70,13 +69,34 @@ def start_all_to_all_heartbeat_server_by_client(all_to_all_heartbeat_obj):
 class Client:
     def __init__(self):
         self.failure_detected = 0
-        self.fc_server = connect_server()
+        self.file_server_instance_name = 'fileControllerServer_1'
+        self.fc_server = connect_server(self.file_server_instance_name)
         self.current_working_path = os.getcwd() + '/' + 'clientStorage'
         print 'Connected to remote server!'
         self.show_help_server()
 
     def show_help_server(self):
         print "[COMMANDS]\n1. list files - lsserver\n2. upload file - upload [filename]\n3. change directory - cdserver [path]\n4. delete file - rm [filename]\n5. update file (text) - update [filename].\n6. download file - read [filename]\n7. change client directory - cdclient [path]\n8. list client files - lsclient"
+
+    def change_file_server(self):
+        names = ["fileControllerServer_1", "fileControllerServer_2", "fileControllerServer_3"]
+        print "changing file server"
+        for (idx, name) in enumerate(names):
+            try:
+                self.fc_server = connect_server(name)
+                self.fc_server.test("ping")
+                self.file_server_instance_name = name
+            except CommunicationError as e:
+                if idx == 2:
+                    print "All servers not available"
+                    return
+                continue
+            except Exception as e:
+                if idx == 2:
+                    print "All servers not available"
+                    return
+                continue
+        print "file server changed"
 
     def upload_file(self, name):
         try:
@@ -88,6 +108,7 @@ class Client:
             return self.fc_server.create_file(name, file_binary)
         except CommunicationError as e:
             print 'failure detected', e.message
+            self.change_file_server()
 
     def update_file(self, path, original_file_name):
         try:
@@ -116,6 +137,7 @@ class Client:
             return self.fc_server.delete_file(file_name)
         except CommunicationError as e:
             print 'failure detected', e.message
+            self.change_file_server()
 
     def ping(self):
         time_unit = 3
@@ -148,6 +170,7 @@ class Client:
             return self.fc_server.change_dir(dir_name)
         except CommunicationError as e:
             print 'failure detected', e.message
+            self.change_file_server()
 
     def read_file(self, file_name):
         try:
@@ -157,6 +180,7 @@ class Client:
             f.write(server_response)
             f.close()
         except CommunicationError as e:
+            self.change_file_server()
             return 'failure detected', e.message
 
     def update_file_server(self, file_name):
@@ -170,6 +194,7 @@ class Client:
             subprocess.call(['nano', path])
             return self.update_file(path, file_name)
         except CommunicationError as e:
+            self.change_file_server()
             return 'failure detected', e.message
 
     def list_server(self):
@@ -178,6 +203,7 @@ class Client:
             for f in response:
                 print f
         except CommunicationError as e:
+            self.change_file_server()
             return 'failure detected', e.message
 
     def listen_command(self):
@@ -219,34 +245,5 @@ class Client:
 
 
 if __name__ == '__main__':
-    # PING ACK
     client = Client()
-    # ping_thread = threading.Thread(target=client.ping)
-    # ping_thread.daemon = True
-    # ping_thread.start()
-
-    # Heartbeat protocol ... 1 -> receive the heartbeat from file sharing server
-    # hb_service = HeartBeatService()
-    # heartbeat_server = threading.Thread(target=start_heartbeat_service, args=(hb_service,))
-    # heartbeat_server.daemon = True
-    # heartbeat_server.start()
-
-    # Heartbeat protocol ... 2 -> detect the failed file sharing server
-    # hb_failure_detection = threading.Thread(target=detect_heatbeat_failure, args=(hb_service, client))
-    # hb_failure_detection.daemon = True
-    # hb_failure_detection.start()
-
-    # start all to all heartbeat server by client
-    # all_to_all_heartbeat_server_obj = AllToAllHeartbeat()
-    # all_to_all_heartbeat_server = threading.Thread(target=start_all_to_all_heartbeat_server_by_client,
-    #                                                args=(all_to_all_heartbeat_server_obj,))
-    # all_to_all_heartbeat_server.daemon = True
-    # all_to_all_heartbeat_server.start()
-
-    # do all to all heartbeat ping
-    # all_to_all_heartbeat_ping_thread = threading.Thread(
-    #     target=all_to_all_heartbeat_server_obj.all_to_all_heartbeat_ping)
-    # all_to_all_heartbeat_ping_thread.daemon = True
-    # all_to_all_heartbeat_ping_thread.start()
-
     client.listen_command()
